@@ -1,60 +1,118 @@
+package work_from_home;
+
 import java.util.Scanner;
 
 
 public class Hangman {
 
-	static int life = 3;
-	private static Scanner sc;
+	static int life = 8;
+	int toWin;
+	int isRight;
+	private static Scanner character;
+	char[] usedChars = new char[25];
+	int u = 0;
 	
-	public static void main(String[] args) {
-		String wort = insertWord();
-		startGame(wort);
-	}
-	
-	public static void startGame(String wort) {
-		Hangman hang = new Hangman();
-		Hangman.gameLogic(wort);
+	//Eingabe des Wortes und erstellen des Arrays zum befüllen der richtigen Buchstaben
+	public void startGame() {
+		String wort = "testaggregat";
+		toWin = wort.length();
+		char[] theWord = new char[wort.length()];
+		for(int i=0;i<theWord.length;i++) {
+			theWord[i]='.';
+		}
+		for(int s=0;s<usedChars.length;s++) {
+			usedChars[s]='.';
+		}
+		isEqual(wort,theWord);
 		
 	}
-	//eingabe des wortes 
-	public static String insertWord() {
+	//Eigentliche eingabe des wortes -> nicht funktionsfähig 
+	public String insertWord() {
 		System.out.println("Geben Sie bitte Ihr Wort ein!: ");
-		sc = new Scanner(System.in);
+		Scanner sc = new Scanner(System.in);
 		String wort = sc.next();
+		sc.close();
 		wort = toSmall(wort);
 		return wort;
-		
 	}
-	//kleinschreibung des wortes
+	
+	//Eingabe des zu pruefenden Buchstaben
+	public static char letter() {
+		character = new Scanner(System.in);
+		char c = character.next().charAt(0);
+		return c;
+	}
+	
+	//kleinschreibung des Rate-Wortes
 	public static String toSmall(String wort) {
 		wort = wort.toLowerCase();
 		return wort;
 	}
 	//ausgabe der unterstriche anhand länge von wort 
-	public static void underscore(String wort) {
-		char[] theWord = new char[wort.length()];
-		for(int i=0;i<wort.length();i++) {
-			System.out.print("_ ");
+	public static void giveOut(char[] theWord) {
+		for(int i=0;i<theWord.length;i++) {
+			if(theWord[i]!='.') {
+				System.out.print(theWord[i]+" ");
+			}else {
+				System.out.print("_ ");
+				
+			}
+		}
+	}
+	
+	//Prüfen der Eingefügten Buchstaben ob gleich eingegebenen Wortes
+	public String isWin(String wort,char[] theWord) {
+		if(toWin==isRight) {
+			giveOut(theWord);
+			System.out.println();
+			System.out.println("Gewonnen!");
+			return "Hurra!! Gewonnen!";
+		}else {
+			return isEqual(wort,theWord);
+			
 		}
 	}
 	//überprüfen ob char in Wort vorhanden ist  
-	public static String gameLogic(String wort) {
+	public String isEqual(String wort,char[] theWord) {
+		System.out.println("Sie haben noch "+life+" Versuche");
 		if(life != 0) {
-			//gebe buchstaben ein der eingefügt werden soll 
-			
-			//
-			
-			
-			
-			return gameLogic(wort);
-		}else {
-			return "Sie haben Verloren! Nächstes mal klappt es bestimmt :)";
+			giveOut(theWord);
+			System.out.println();
+			System.out.println("Bitte geben sie Ihren Buchstaben ein:");
+			Character toTest = letter();
+			String a = toTest.toString();
+			//prüfe ob buchstabe vorhanden
+			if(wort.contains(a)) {
+				for(int i=0;i<wort.length();i++) {
+					if(wort.charAt(i)==toTest) {
+						theWord[i]=toTest;
+						isRight+=1;
+					}
+				}
+				alreadyUsed(toTest);
+				return isWin(wort,theWord);
+			}else {
+			life -=1;
+			alreadyUsed(toTest);
+			return isEqual(wort,theWord);
+			}
 		}
+		System.out.println("Leider Verloren :(");
+		return wort;
 	}
-	//ausgabe der gefundenen buchstaben an der richtigen stelle im wort 
-	//
 	
-	
-	
-	
+	//Einfuegen von den eingegebenen Buchstaben in Array zum pruefen ob schon getestet
+	public void alreadyUsed(char used) {
+		usedChars[u] = used;
+		System.out.println("Ihre benutzten Buchstaben:");
+		for(int i=0;i<usedChars.length;i++) {
+			if(usedChars[i]!='.') {
+				System.out.print(usedChars[i]+" ");	
+			}
+		}
+		System.out.println();
+		System.out.println();
+		u++;
+	}
 }
+	
